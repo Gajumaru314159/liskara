@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="jp">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+    <meta name="keywords" content="カラオケ アプリ 管理 得点" />
+    <meta name="description" content="キーの設定や得点の管理、ソート表示などを備えたカラオケヘビーユーザーのためのカラオケ管理アプリ" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+    <title>LisKara カラオケ管理</title>
+    <link rel="apple-touch-icon" href="assets/img/icon.jpg" />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+    <link rel="stylesheet" href="assets/css/style.css?<?php echo date('Ymd-Hi'); ?>" />
+    <link rel="shortcut icon" href="assets/img/favicon.jpg">
+    <link rel="manifest" href="manufest.json">
+    <script type="text/javascript" src="https://apis.google.com/js/api.js"></script>
+</head>
+
+<body style="background-color:#dbdbdb">
+    <div id="content">
+
+        <div id="music-panel-list" class="full-panel">
+        </div>
+        <div class="input-group" id="search-panel">
+            <input type="text" class="form-control" id="search-word" placeholder="検索ワード入力欄"
+                onchange="updateHTMLObject()" style="flex:1" />
+            <div>
+                <button type="button" class="btn btn-default"
+                    onclick="clearSearchFilter();updateHTMLObject();">クリア</button>
+            </div>
+        </div>
+
+        <!-- 順序変更 -->
+        <div id="change-sort-panel" class="full-panel">
+            <form>
+                <div class="form-group">
+                    <label for="sort-mode">ソート方式</label>
+                    <select class="form-control" id="sort-mode">
+                        <option>高得点順</option>
+                        <option>低得点順</option>
+                        <option>お気に入り順</option>
+                        <option>お気に入り逆順</option>
+                        <option>アーティスト順</option>
+                        <option>曲名順</option>
+                        <option>ランダム</option>
+                    </select>
+                </div>
+            </form>
+            <button type="button" class="btn btn-primary btn-block" onclick="showMusicPanelList()">閉じる</button>
+        </div>
+        <!-- 曲追加 -->
+        <div id="add-music-panel" class="full-panel">
+            <form>
+                <div class="form-group">
+                    <label for="music-title">曲名</label>
+                    <input type="text" class="form-control" id="music-title" value="無題" />
+                </div>
+                <div class="form-group">
+                    <label for="music-title">歌手名</label>
+                    <input type="text" class="form-control" id="music-artist" value="無題" />
+                </div>
+                <div class="form-group">
+                    <label for="music-title">得点</label>
+                    <input type="number" class="form-control" id="music-score" value="0.0" />
+                </div>
+                <div class="form-group">
+                    <label for="music-key">キー</label>
+                    <select class="form-control" id="music-key">
+                        <option>♯6</option>
+                        <option>♯5</option>
+                        <option>♯4</option>
+                        <option>♯3</option>
+                        <option>♯2</option>
+                        <option>♯1</option>
+                        <option selected>♭0</option>
+                        <option>♭1</option>
+                        <option>♭2</option>
+                        <option>♭3</option>
+                        <option>♭4</option>
+                        <option>♭5</option>
+                        <option>♭6</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="music-favorite">お気に入り</label>
+                    <select class="form-control" id="music-favorite">
+                        <option>1</option>
+                        <option>2</option>
+                        <option>3</option>
+                        <option>4</option>
+                        <option>5</option>
+                        <option>6</option>
+                        <option>7</option>
+                        <option>8</option>
+                        <option>9</option>
+                        <option>10</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="music-favorite">ジャンル</label>
+                    <div id="genre-list">
+                    </div>
+                </div>
+            </form>
+            <div class="container-fluid">
+                <div class="row">
+                    <button type="button" class="btn btn-primary btn-block" onclick="addMusic()">OK</button>
+                </div>
+                <div class="row mt-2">
+                    <button type="button" class="btn btn-primary btn-block" onclick="deleteMusic()">Delete</button>
+                </div>
+            </div>
+        </div>
+        <!-- 機種変更 -->
+        <div id="change-model-panel" class="full-panel">
+            <form>
+                <div class="form-group">
+                    <label for="model">機種</label>
+                    <select class="form-control" id="model" onchange="changeHeaderModel()">
+                        <option>JOYSOUND CROSSO</option>
+                        <option selected>JOYSOUND F1</option>
+                        <option>JOYSOUND MAX</option>
+                        <option>JOYSOUND MAX2</option>
+                        <option>Premier DAM</option>
+                        <option>LIVE DAM</option>
+                        <option>LIVE DAM STADIUM</option>
+                        <option>LIVE DAM STADIUM STAGE</option>
+                    </select>
+                </div>
+            </form>
+            <button type="button" class="btn btn-primary btn-block" onclick="showMusicPanelList()">閉じる</button>
+        </div>
+        <!-- ジャンル -->
+        <div id="genre-tag-panel" class="full-panel">
+            <form>
+                <div class="form-group">
+                    <label for="genre-edit-field" id="genre-edit-area">ジャンル編集(カンマ区切り)</label>
+                    <textarea class="form-control" id="genre-edit-field" rows="14"></textarea>
+                </div>
+            </form>
+            <button type="button" class="btn btn-primary btn-block" onclick="updateGenreList()">適用</button>
+            <button type="button" class="btn btn-primary btn-block" onclick="showMusicPanelList()">閉じる</button>
+        </div>
+        <!-- JSON編集 -->
+        <div id="edit-json-panel" class="full-panel">
+            <form>
+                <div class="form-group">
+                    <label for="json-edit-field" id="edit-area">編集エリア</label>
+                    <textarea class="form-control" id="json-edit-field" rows="14"></textarea>
+                </div>
+            </form>
+            <button type="button" class="btn btn-primary btn-block" onclick="applyJSON()">適用</button>
+            <button type="button" class="btn btn-primary btn-block" onclick="saveJSON()">保存</button>
+            <button type="button" class="btn btn-primary btn-block" onclick="loadJSON()">読み込み</button>
+            <button type="button" class="btn btn-primary btn-block" onclick="showMusicPanelList()">閉じる</button>
+        </div>
+    </div>
+
+    <header>
+        <div id="nav-drawer">
+            <input id="nav-input" type="checkbox" class="nav-unshown" />
+            <label class="hamburger" for="nav-input"><span></span></label>
+            <label class="nav-unshown" id="nav-close" for="nav-input"></label>
+            <div id="nav-content">
+                <img src="assets/img/header.jpg" style="width:100%">
+                <div>
+                    <button type="button" class="btn btn-primary btn-lg btn-block"
+                        onclick="updateHTMLObject();showMusicPanelList();">リストの表示</button>
+                    <button type="button" class="btn btn-primary btn-lg btn-block"
+                        onclick="showMusicAddPanel()">曲の追加</button>
+                    <button type="button" class="btn btn-primary btn-lg btn-block"
+                        onclick="showChangeSortPanel()">順序の変更</button>
+                    <button type="button" class="btn btn-primary btn-lg btn-block"
+                        onclick="showChangeModelPanel()">機種の変更</button>
+                    <button type="button" class="btn btn-primary btn-lg btn-block"
+                        onclick="showGenreTagPanel()">ジャンル管理</button>
+                    <button type="button" class="btn btn-primary btn-lg btn-block"
+                        onclick="showEditJSONPanel()">JSON編集</button>
+                    <button type="button" class="btn btn-primary btn-lg btn-block"
+                        onclick="location.reload(true)">リロード</button>
+                </div>
+            </div>
+        </div>
+        <div id="header-model">aaa</div>
+    </header>
+
+    <div id="pop" onclick="disablePopup()">
+        <div>
+            ホーム画面に追加すると<br>アプリのように使えます
+        </div>
+    </div>
+    <script type="text/javascript" src="assets/js/script.js"></script>
+</body>
+
+</html>

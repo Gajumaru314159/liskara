@@ -1,0 +1,275 @@
+body {
+    user-select: none;
+    -moz-user-select: none;
+    /* Firefox */
+    -ms-user-select: none;
+    /* Internet Explorer */
+    -khtml-user-select: none;
+    /* KHTML browsers (e.g. Konqueror) */
+    -webkit-user-select: none;
+    /* Chrome, Safari, and Opera */
+    -webkit-touch-callout: none;
+    /* Disable Android and iOS callouts*/
+}
+
+.btn-primary {
+    background: #337ab7;
+    border-color: #2e6da4;
+}
+
+body,
+input,
+textarea,
+select {
+    /* 入力欄にフォーカスが当たっても拡大しない */
+    font-size: 17px;
+}
+
+label {
+    font-weight: 700;
+}
+
+header {
+    position: fixed;
+    top: 0px;
+    width: 100%;
+    height: 46px;
+    padding: 10px;
+    background: skyblue;
+    box-shadow: rgba(0, 0, 0, 0.5) 0 0 0.5rem;
+}
+
+#content {
+    margin: 0px;
+    padding: 0px;
+    height: auto;
+}
+
+/*チェックボックス等は非表示に*/
+.nav-unshown {
+    display: none;
+}
+
+/*アイコンのスペース*/
+.hamburger {
+    display: inline-block;
+    width: 30px;
+    height: 22px;
+    vertical-align: middle;
+}
+
+/*ハンバーガーアイコンをCSSだけで表現*/
+.hamburger span,
+.hamburger span:before,
+.hamburger span:after {
+    position: absolute;
+    height: 3px;
+    width: 25px;
+    border-radius: 3px;
+    background: #555;
+    display: block;
+    content: '';
+    cursor: pointer;
+}
+
+.hamburger span:before {
+    bottom: -8px;
+}
+
+.hamburger span:after {
+    bottom: -16px;
+}
+
+
+/*閉じる用の薄黒カバー*/
+#nav-close {
+    display: none;
+    position: fixed;
+    z-index: 99;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: black;
+    opacity: 0;
+    transition: .3s ease-in-out;
+}
+
+/*中身*/
+#nav-content {
+    overflow: auto;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 9999;
+    width: 70%;
+    max-width: 330px;
+    height: 100%;
+    background: #fff;
+    transition: .3s ease-in-out;
+    -webkit-transform: translateX(-105%);
+    transform: translateX(-105%);
+}
+
+#nav-content div {
+    padding: 10px;
+}
+
+#nav-input:checked~#nav-close {
+    display: block;
+    opacity: .5;
+}
+
+#nav-input:checked~#nav-content {
+    -webkit-transform: translateX(0%);
+    transform: translateX(0%);
+    box-shadow: 6px 0 25px rgba(0, 0, 0, .15);
+}
+
+.full-panel {
+    margin-top: 46px;
+    width: 100%;
+    padding: 10px;
+    font-size: 20px;
+}
+
+.full-panel label {
+    margin-bottom: 0px;
+}
+
+.music-panel {
+    min-height: 70px;
+    padding: 5px;
+    font-size: 12px;
+    border-bottom: solid 1px #aaaaaa;
+    background-color: white;
+    border-radius: 0.5rem;
+}
+
+.title {
+    display: block;
+    width: 100%;
+    font-size: 20px;
+    word-wrap: break-word;
+}
+
+.score {
+    background-color: blue;
+    color: white;
+    height: 20px;
+    padding: 0px 10px;
+    border-radius: 10px;
+}
+
+#change-sort-panel,
+#add-music-panel,
+#change-model-panel,
+#edit-json-panel,
+#genre-tag-panel {
+    display: none;
+}
+
+.favorite {
+    color: #ff0000;
+}
+
+.music-panel span {
+    margin: 0px 5px;
+}
+
+#header-model {
+    padding-right: 10px;
+    position: fixed;
+    top: 16px;
+    right: 0px;
+    font-size: 16px;
+    font-weight: bolder;
+}
+
+#search-panel {
+    box-shadow: rgba(0, 0, 0, 0.5) 0 0 0.5rem;
+    position: fixed;
+    background-color: white;
+    width: 100vw;
+    bottom: 0px;
+    padding: 0.3rem;
+}
+
+#search-panel>div {
+    width: 5rem;
+}
+
+#pop {
+    position: fixed;
+    top: 0px;
+    bottom: 0px;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.66);
+    z-index: 20000;
+}
+
+#pop div {
+    position: absolute;
+    width: 80%;
+    height: 100px;
+    background-color: white;
+    top: 0px;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
+    margin: auto auto;
+    font-weight: 400;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#music-panel-list {
+    padding-bottom: 64px;
+}
+
+.genre-btn {
+    border-radius: 1rem;
+    background: #b1b1b1;
+    border: none;
+    font-size: 70%;
+    font-weight: bold;
+    margin: 2px;
+    border: solid 1px black;
+}
+
+.genre-btn-s {
+    background: #ffaa00;
+}
+
+#add-genre {
+    background: red;
+    color: white;
+}
+
+
+
+/*スクロールバー表示させる*/
+::-webkit-scrollbar {
+    width: 1rem;
+    -webkit-overflow-scrolling: touch;
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgb(8, 151, 247);
+    border-radius: 1rem;
+}
+
+::-webkit-scrollbar-track-piece:start {
+    background: #fff;
+}
+
+::-webkit-scrollbar-track-piece:end {
+    background: #fff;
+}
+
+.tes {
+    display: none;
+}
