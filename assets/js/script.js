@@ -161,8 +161,11 @@ function updateHTMLObject() {
         }
         let score = musicList[i].score[currentModel];
         if (score == undefined) score = 0;
+        
+        // リリース年の表示（データがない場合は表示しない）
+        let releaseYearText = musicList[i].releaseYear ? ` (${musicList[i].releaseYear})` : "";
 
-        newDiv.innerHTML = "<span class=\"title\">" + musicList[i].title + "</span><span class=\"artist\">" + musicList[i].artist + "</span><div><span class=\"score\">" + score + "</span><span class=\"key\">" + musicList[i].key + "</span><span class=\"favorite\">" + favText + "</span>";
+        newDiv.innerHTML = "<span class=\"title\">" + musicList[i].title + releaseYearText + "</span><span class=\"artist\">" + musicList[i].artist + "</span><div>" + "<span class=\"score\">" + score + "</span><span class=\"key\">" + musicList[i].key + "</span><span class=\"favorite\">" + favText + "</span>";
         newDiv.json = musicList[i];
         newDiv.index = i;
 
@@ -220,6 +223,18 @@ function sortMusicList(sortMode) {
             if (bFavorite == undefined) bFavorite = 0;
 
             return aFavorite - bFavorite;
+        });
+    } else if (sortMode == "リリース順") {
+        musicList.sort((a, b) => {
+            let aYear = a.releaseYear ? parseInt(a.releaseYear) : 0;
+            let bYear = b.releaseYear ? parseInt(b.releaseYear) : 0;
+            return aYear - bYear;
+        });
+    } else if (sortMode == "リリース逆順") {
+        musicList.sort((a, b) => {
+            let aYear = a.releaseYear ? parseInt(a.releaseYear) : 0;
+            let bYear = b.releaseYear ? parseInt(b.releaseYear) : 0;
+            return bYear - aYear;
         });
     } else if (sortMode == "アーティスト順") {
         for (let i = 1, end = musicList.length; i < end; i++) {
@@ -309,6 +324,7 @@ function showMusicAddPanel(element) {
         document.getElementById("music-score").value = 0.0;
         document.getElementById("music-key").value = "♭0";
         document.getElementById("music-favorite").value = 1;
+        document.getElementById("music-release-year").value = "";
         currentIndex = musicList.length;
     } else {
         // 既存の楽曲データの編集
@@ -323,6 +339,7 @@ function showMusicAddPanel(element) {
         document.getElementById("music-score").value = score;
         document.getElementById("music-key").value = json.key;
         document.getElementById("music-favorite").value = json.favorite;
+        document.getElementById("music-release-year").value = json.releaseYear || "";
         currentIndex = element.index;
     }
 
@@ -355,6 +372,7 @@ function addMusic() {
     newMusic.score[currentModel] = parseFloat(document.getElementById("music-score").value);
     newMusic.key = document.getElementById("music-key").value;
     newMusic.favorite = document.getElementById("music-favorite").value;
+    newMusic.releaseYear = document.getElementById("music-release-year").value;
 
     // ジャンル設定の読み込み
     if (0 < genreListBox.children.length) {
