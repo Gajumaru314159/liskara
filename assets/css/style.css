@@ -165,7 +165,8 @@ header {
 #add-music-panel,
 #change-model-panel,
 #edit-json-panel,
-#genre-tag-panel {
+#genre-tag-panel,
+#stats-panel {
     display: none;
 }
 
@@ -272,4 +273,107 @@ header {
 
 .tes {
     display: none;
+}
+
+/* 統計パネル */
+.stats-title {
+    font-size: 22px;
+    font-weight: bold;
+    margin-bottom: 4px;
+    color: #337ab7;
+}
+
+.stats-model-label {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 12px;
+}
+
+.stats-section {
+    margin-bottom: 20px;
+    background: #f8f8f8;
+    border-radius: 8px;
+    padding: 10px 12px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+
+.stats-section-title {
+    font-size: 15px;
+    font-weight: bold;
+    color: #444;
+    margin-bottom: 8px;
+    border-left: 4px solid #337ab7;
+    padding-left: 8px;
+}
+
+#stats-histogram {
+    display: block;
+    max-width: 100%;
+    height: 200px;
+}
+
+.stats-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 16px;
+}
+
+.stats-table th {
+    width: 5em;
+    text-align: left;
+    padding: 4px 8px;
+    color: #555;
+    font-weight: bold;
+}
+
+.stats-table td {
+    padding: 4px 8px;
+    font-size: 18px;
+    font-weight: bold;
+    color: #337ab7;
+}
+
+.stats-table tr {
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.stats-top3 {
+    padding-left: 20px;
+    margin: 0;
+}
+
+.stats-top3 li {
+    padding: 6px 0;
+    border-bottom: 1px solid #e0e0e0;
+    font-size: 15px;
+}
+
+.stats-top3 li:last-child {
+    border-bottom: none;
+}
+
+.stats-top3-score {
+    display: inline-block;
+    background-color: #337ab7;
+    color: white;
+    padding: 1px 8px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: bold;
+    margin-right: 6px;
+    min-width: 52px;
+    text-align: center;
+}
+
+.stats-top3-title {
+    font-weight: bold;
+    font-size: 16px;
+}
+
+.stats-top3-artist {
+    display: block;
+    font-size: 13px;
+    color: #888;
+    margin-left: 66px;
+    margin-top: 2px;
 }

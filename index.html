@@ -152,6 +152,36 @@
             <button type="button" class="btn btn-primary btn-block" onclick="updateGenreList()">適用</button>
             <button type="button" class="btn btn-primary btn-block" onclick="showMusicPanelList()">閉じる</button>
         </div>
+        <!-- 統計 -->
+        <div id="stats-panel" class="full-panel">
+            <h5 class="stats-title">統計</h5>
+            <div id="stats-model-label" class="stats-model-label"></div>
+
+            <!-- 点数分布ヒストグラム -->
+            <div class="stats-section">
+                <div class="stats-section-title">点数の分布</div>
+                <canvas id="stats-histogram" width="340" height="200"></canvas>
+            </div>
+
+            <!-- 最小・最大・平均・中央 -->
+            <div class="stats-section">
+                <div class="stats-section-title">基本統計量</div>
+                <table class="stats-table">
+                    <tr><th>最小</th><td id="stats-min">-</td></tr>
+                    <tr><th>最大</th><td id="stats-max">-</td></tr>
+                    <tr><th>平均</th><td id="stats-avg">-</td></tr>
+                    <tr><th>中央値</th><td id="stats-med">-</td></tr>
+                </table>
+            </div>
+
+            <!-- 得点上位3曲 -->
+            <div class="stats-section">
+                <div class="stats-section-title">得点上位3曲</div>
+                <ol id="stats-top3" class="stats-top3"></ol>
+            </div>
+
+            <button type="button" class="btn btn-primary btn-block" onclick="showMusicPanelList()">閉じる</button>
+        </div>
         <!-- JSON編集 -->
         <div id="edit-json-panel" class="full-panel">
             <form>
@@ -185,6 +215,8 @@
                         onclick="showChangeModelPanel()">機種の変更</button>
                     <button type="button" class="btn btn-primary btn-lg btn-block"
                         onclick="showGenreTagPanel()">ジャンル管理</button>
+                    <button type="button" class="btn btn-primary btn-lg btn-block"
+                        onclick="showStatsPanel()">統計</button>
                     <button type="button" class="btn btn-primary btn-lg btn-block"
                         onclick="showEditJSONPanel()">JSON編集</button>
                     <button type="button" class="btn btn-primary btn-lg btn-block"

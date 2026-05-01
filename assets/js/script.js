@@ -292,6 +292,7 @@ function hideAllPanel() {
     document.getElementById("edit-json-panel").style.display = "none";
     document.getElementById("search-panel").style.display = "none";
     document.getElementById("genre-tag-panel").style.display = "none";
+    document.getElementById("stats-panel").style.display = "none";
 
     document.getElementById("nav-input").checked = false;
 }
@@ -492,6 +493,165 @@ function showGenreTagPanel() {
     document.getElementById("genre-tag-panel").style.display = "block";
 }
 
+
+// 統計パネルを表示する
+function showStatsPanel() {
+    updateScrollOffset();
+    hideAllPanel();
+
+    let currentModel = document.getElementById("model").value;
+
+    // 現在の機種ラベルを更新
+    document.getElementById("stats-model-label").textContent = "機種: " + currentModel;
+
+    // 有効なスコアを収集（0以上のもの）
+    let scores = [];
+    for (let i = 0; i < musicList.length; i++) {
+        let s = musicList[i].score[currentModel];
+        if (s !== undefined && s > 0) {
+            scores.push(parseFloat(s));
+        }
+    }
+
+    if (scores.length === 0) {
+        document.getElementById("stats-min").textContent = "-";
+        document.getElementById("stats-max").textContent = "-";
+        document.getElementById("stats-avg").textContent = "-";
+        document.getElementById("stats-med").textContent = "-";
+        document.getElementById("stats-top3").innerHTML = "<li>データがありません</li>";
+        // ヒストグラムをクリア
+        let canvas = document.getElementById("stats-histogram");
+        let ctx = canvas.getContext("2d");
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        document.getElementById("stats-panel").style.display = "block";
+        return;
+    }
+
+    // 基本統計量の計算
+    let minScore = Math.min.apply(null, scores);
+    let maxScore = Math.max.apply(null, scores);
+    let sum = scores.reduce(function(a, b) { return a + b; }, 0);
+    let avgScore = sum / scores.length;
+
+    let sorted = scores.slice().sort(function(a, b) { return a - b; });
+    let mid = Math.floor(sorted.length / 2);
+    let medScore = sorted.length % 2 === 0
+        ? (sorted[mid - 1] + sorted[mid]) / 2
+        : sorted[mid];
+
+    document.getElementById("stats-min").textContent = minScore.toFixed(2);
+    document.getElementById("stats-max").textContent = maxScore.toFixed(2);
+    document.getElementById("stats-avg").textContent = avgScore.toFixed(2);
+    document.getElementById("stats-med").textContent = medScore.toFixed(2);
+
+    // 上位3曲
+    let ranked = musicList
+        .filter(function(m) {
+            let s = m.score[currentModel];
+            return s !== undefined && s > 0;
+        })
+        .map(function(m) {
+            return { title: m.title, artist: m.artist, score: parseFloat(m.score[currentModel]) };
+        })
+        .sort(function(a, b) { return b.score - a.score; })
+        .slice(0, 3);
+
+    let top3El = document.getElementById("stats-top3");
+    top3El.innerHTML = "";
+    for (let i = 0; i < ranked.length; i++) {
+        let li = document.createElement("li");
+        li.innerHTML = "<span class='stats-top3-score'>" + ranked[i].score.toFixed(2) + "</span> "
+            + "<span class='stats-top3-title'>" + ranked[i].title + "</span>"
+            + "<span class='stats-top3-artist'>" + ranked[i].artist + "</span>";
+        top3El.appendChild(li);
+    }
+
+    // ヒストグラムの描画
+    drawHistogram(scores, minScore, maxScore);
+
+    document.getElementById("stats-panel").style.display = "block";
+}
+
+// ヒストグラムを描画する
+function drawHistogram(scores, minScore, maxScore) {
+    let canvas = document.getElementById("stats-histogram");
+    // canvasの表示幅に合わせてサイズを調整
+    let displayWidth = canvas.parentElement.clientWidth - 20;
+    if (displayWidth > 0) {
+        canvas.width = displayWidth;
+    }
+    let W = canvas.width;
+    let H = canvas.height;
+    let ctx = canvas.getContext("2d");
+    ctx.clearRect(0, 0, W, H);
+
+    let BIN_COUNT = 10;
+    let range = maxScore - minScore;
+    let binSize = range <= 0 ? 1 : range / BIN_COUNT;
+
+    // ビンのカウント
+    let bins = new Array(BIN_COUNT).fill(0);
+    for (let i = 0; i < scores.length; i++) {
+        let idx = Math.floor((scores[i] - minScore) / binSize);
+        if (idx >= BIN_COUNT) idx = BIN_COUNT - 1;
+        bins[idx]++;
+    }
+
+    let maxCount = Math.max.apply(null, bins);
+    if (maxCount === 0) return;
+
+    let padL = 36, padR = 10, padT = 10, padB = 36;
+    let chartW = W - padL - padR;
+    let chartH = H - padT - padB;
+    let barW = chartW / BIN_COUNT;
+
+    // 軸
+    ctx.strokeStyle = "#555";
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(padL, padT);
+    ctx.lineTo(padL, padT + chartH);
+    ctx.lineTo(padL + chartW, padT + chartH);
+    ctx.stroke();
+
+    // バー
+    for (let i = 0; i < BIN_COUNT; i++) {
+        let barH = (bins[i] / maxCount) * chartH;
+        let x = padL + i * barW;
+        let y = padT + chartH - barH;
+
+        // グラデーション
+        let grad = ctx.createLinearGradient(x, y, x, padT + chartH);
+        grad.addColorStop(0, "#4a9eda");
+        grad.addColorStop(1, "#1a5fa0");
+        ctx.fillStyle = grad;
+        ctx.fillRect(x + 1, y, barW - 2, barH);
+
+        // カウント数の表示（バーが十分な高さの場合）
+        if (bins[i] > 0) {
+            ctx.fillStyle = "#333";
+            ctx.font = "10px sans-serif";
+            ctx.textAlign = "center";
+            ctx.fillText(bins[i], x + barW / 2, y - 2);
+        }
+    }
+
+    // X軸ラベル（最小・中間・最大）
+    ctx.fillStyle = "#555";
+    ctx.font = "10px sans-serif";
+    ctx.textAlign = "center";
+    let labelCount = 5;
+    for (let i = 0; i <= labelCount; i++) {
+        let val = minScore + (range / labelCount) * i;
+        let x = padL + (chartW / labelCount) * i;
+        ctx.fillText(val.toFixed(1), x, padT + chartH + 14);
+    }
+
+    // Y軸ラベル
+    ctx.textAlign = "right";
+    ctx.fillText("0", padL - 4, padT + chartH);
+    ctx.fillText(maxCount, padL - 4, padT + 8);
+}
 
 //JSONの編集パネルの表示
 function showEditJSONPanel() {
